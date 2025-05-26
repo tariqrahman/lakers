@@ -12,7 +12,8 @@ import {
   CardContent,
   Box,
   CircularProgress,
-  Alert
+  Alert,
+  Skeleton
 } from '@mui/material'
 import './App.css'
 
@@ -36,11 +37,27 @@ function Home() {
     fetchDraftPicks();
   }, []);
 
-  if (loading) return (
-    <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-      <CircularProgress />
-    </Box>
-  );
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Skeleton variant="text" width="60%" height={60} sx={{ mx: 'auto', mb: 4 }} />
+        <Grid container spacing={3}>
+          {[1, 2, 3, 4, 5, 6].map((index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card>
+                <CardContent>
+                  <Skeleton variant="text" width="80%" height={40} />
+                  <Skeleton variant="text" width="60%" />
+                  <Skeleton variant="text" width="60%" />
+                  <Skeleton variant="text" width="40%" />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    );
+  }
   
   if (error) return (
     <Container>
@@ -87,7 +104,12 @@ function Home() {
 function App() {
   return (
     <Router>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        minHeight: '100vh',
+        bgcolor: 'background.default'
+      }}>
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component={Link} to="/" sx={{ 
@@ -99,10 +121,12 @@ function App() {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/team/:teamName" element={<TeamProfile />} />
-        </Routes>
+        <Box sx={{ flexGrow: 1 }}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/team/:teamName" element={<TeamProfile />} />
+          </Routes>
+        </Box>
       </Box>
     </Router>
   )

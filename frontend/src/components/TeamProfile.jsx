@@ -9,7 +9,8 @@ import {
   CardContent,
   Box,
   CircularProgress,
-  Alert
+  Alert,
+  Skeleton
 } from '@mui/material';
 
 function TeamProfile() {
@@ -41,11 +42,28 @@ function TeamProfile() {
     fetchTeamData();
   }, [teamName]);
 
-  if (loading) return (
-    <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-      <CircularProgress />
-    </Box>
-  );
+  if (loading) {
+    return (
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Skeleton variant="text" width="40%" height={60} sx={{ mx: 'auto', mb: 4 }} />
+        <Skeleton variant="text" width="30%" height={40} sx={{ mb: 4 }} />
+        <Grid container spacing={3}>
+          {[1, 2, 3].map((index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Card>
+                <CardContent>
+                  <Skeleton variant="text" width="80%" height={40} />
+                  <Skeleton variant="text" width="60%" />
+                  <Skeleton variant="text" width="60%" />
+                  <Skeleton variant="text" width="40%" />
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    );
+  }
   
   if (error) return (
     <Container>
