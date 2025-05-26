@@ -22,4 +22,22 @@ export async function getTeamByName(teamName) {
     throw new Error('Failed to fetch team');
   }
   return response.json();
+}
+
+export async function refreshDraftPicks() {
+  const response = await fetch(`${API_BASE_URL}/refresh`, {
+    method: 'POST',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to refresh draft picks');
+  }
+  return response.json();
+}
+
+export async function getAllTeamsPicks() {
+  const response = await fetch(`${API_BASE_URL}/draft-picks/tradeable`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch all teams picks');
+  }
+  return response.json();
 } 

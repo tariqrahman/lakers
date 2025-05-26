@@ -1,15 +1,25 @@
 import express from 'express';
 import { getDraftPicksByTeam, getAllDraftPicks, getTeamByName } from '../utils/draftPicks.js';
+import { refreshDraftPicks } from '../scripts/draftPicksScraper.js';
+import { Pool } from 'pg';
 
 const router = express.Router();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
 
 router.get('/draft-picks', async (req, res) => {
   try {
-    const draftPicks = await getAllDraftPicks();
-    res.json(draftPicks);
+    const result = await pool.query(`
+      SELECT p.*, t.team_name, t.team_code
+      FROM tradeable_picks p
+      JOIN teams t ON p.team_id = t.id
+      ORDER BY t.team_name, p.season, p.round, p.pick_number
+    `);
+    res.json(result.rows);
   } catch (error) {
     console.error('Error fetching draft picks:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Failed to fetch draft picks' });
   }
 });
 
@@ -33,6 +43,83 @@ router.get('/team/:name', async (req, res) => {
   } catch (error) {
     console.error('Error fetching team:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all teams' picks
+router.get('/', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT p.*, t.team_name, t.team_code
+      FROM tradeable_picks p
+      JOIN teams t ON p.team_id = t.id
+      ORDER BY t.team_name, p.season, p.round, p.pick_number
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching draft picks:', error);
+    res.status(500).json({ error: 'Failed to fetch draft picks' });
+  }
+});
+
+// Get all tradeable picks grouped by team
+router.get('/draft-picks/tradeable', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        t.id as team_id,
+        t.name as team_name,
+        json_agg(
+          json_build_object(
+            'id', p.id,
+            'season', p.season,
+            'round', p.round,
+            'pick_number', p.pick_number,
+            'pick_type', p.pick_type,
+            'value', p.value,
+            'normalized_value', p.normalized_value,
+            'swap_details', p.swap_details,
+            'original_team', ot.name
+          ) ORDER BY p.season, p.round, p.pick_number
+        ) as picks
+      FROM teams t
+      LEFT JOIN tradeable_picks p ON t.id = p.team_id
+      LEFT JOIN teams ot ON p.original_team_id = ot.id
+      GROUP BY t.id, t.name
+      ORDER BY t.name
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching tradeable picks:', error);
+    res.status(500).json({ error: 'Failed to fetch tradeable picks' });
+  }
+});
+
+// Get draft picks for a specific team
+router.get('/team/:teamId', async (req, res) => {
+  try {
+    const { teamId } = req.params;
+    const result = await pool.query(`
+      SELECT p.*, t.team_name, t.team_code
+      FROM tradeable_picks p
+      JOIN teams t ON p.team_id = t.id
+      WHERE p.team_id = $1
+      ORDER BY p.season, p.round, p.pick_number
+    `, [teamId]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching team draft picks:', error);
+    res.status(500).json({ error: 'Failed to fetch team draft picks' });
+  }
+});
+
+router.post('/refresh', async (req, res) => {
+  try {
+    await refreshDraftPicks();
+    res.json({ message: 'Draft picks refresh completed successfully' });
+  } catch (error) {
+    console.error('Error refreshing draft picks:', error);
+    res.status(500).json({ error: 'Failed to refresh draft picks' });
   }
 });
 
