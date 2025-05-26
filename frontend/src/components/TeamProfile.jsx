@@ -1,31 +1,36 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
-import { getAllDraftPicks } from './services/api'
-import TeamProfile from './components/TeamProfile'
-import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Container, 
-  Grid, 
-  Card, 
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { getDraftPicksByTeam, getTeamByName } from '../services/api';
+import {
+  Container,
+  Typography,
+  Grid,
+  Card,
   CardContent,
   Box,
   CircularProgress,
   Alert
-} from '@mui/material'
-import './App.css'
+} from '@mui/material';
 
-function Home() {
+function TeamProfile() {
+  const { teamName } = useParams();
+  const [team, setTeam] = useState(null);
   const [draftPicks, setDraftPicks] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchDraftPicks = async () => {
+    const fetchTeamData = async () => {
       try {
-        const data = await getAllDraftPicks();
-        setDraftPicks(data);
+        setLoading(true);
+        const teamData = await getTeamByName(teamName);
+        if (teamData) {
+          setTeam(teamData);
+          const picks = await getDraftPicksByTeam(teamData.id);
+          setDraftPicks(picks);
+        } else {
+          setError('Team not found');
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -33,8 +38,8 @@ function Home() {
       }
     };
 
-    fetchDraftPicks();
-  }, []);
+    fetchTeamData();
+  }, [teamName]);
 
   if (loading) return (
     <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
@@ -47,11 +52,20 @@ function Home() {
       <Alert severity="error">Error: {error}</Alert>
     </Container>
   );
+  
+  if (!team) return (
+    <Container>
+      <Alert severity="error">Team not found</Alert>
+    </Container>
+  );
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h3" component="h1" gutterBottom align="center">
-        NBA Draft Picks
+        {team.name}
+      </Typography>
+      <Typography variant="h4" component="h2" gutterBottom sx={{ mt: 4, mb: 2 }}>
+        Draft Picks
       </Typography>
       <Grid container spacing={3}>
         {draftPicks.map((pick, index) => (
@@ -59,12 +73,7 @@ function Home() {
             <Card>
               <CardContent>
                 <Typography variant="h5" component="h3" gutterBottom>
-                  <Link to={`/team/${pick.team_name}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    {pick.team_name}
-                  </Link>
-                </Typography>
-                <Typography color="text.secondary" gutterBottom>
-                  Season: {pick.season}
+                  Season {pick.season}
                 </Typography>
                 <Typography color="text.secondary" gutterBottom>
                   First Round: {pick.first_rd}
@@ -81,31 +90,7 @@ function Home() {
         ))}
       </Grid>
     </Container>
-  )
+  );
 }
 
-function App() {
-  return (
-    <Router>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6" component={Link} to="/" sx={{ 
-              flexGrow: 1, 
-              textDecoration: 'none', 
-              color: 'inherit' 
-            }}>
-              NBA Draft Tracker
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/team/:teamName" element={<TeamProfile />} />
-        </Routes>
-      </Box>
-    </Router>
-  )
-}
-
-export default App
+export default TeamProfile; 
