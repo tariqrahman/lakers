@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, IconButton } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import AddIcon from "@mui/icons-material/Add";
 import { getAllTeamsPicks } from "../../services/api";
 import TTViewTrades from "./TTViewTrades/ttViewTrades";
 import TTNewTrade from "./TTNewTrade/ttNewTrade";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const TradeTool = (props) => {
   const [teamAssets, setTeamAssets] = useState([]);
@@ -10,6 +13,7 @@ const TradeTool = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [tradesRefreshKey, setTradesRefreshKey] = useState(0);
+  const isSmallScreen = useMediaQuery("(max-width: 500px)");
 
   const fetchTeamAssets = async () => {
     try {
@@ -43,26 +47,38 @@ const TradeTool = (props) => {
     <Box
       sx={{ width: "100%", height: "calc(100vh - 64px)", overflowY: "auto" }}
     >
-      {/* Header and Toggle Button Row */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          px: 4,
+          px: 7,
           pt: 6,
         }}
       >
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "black", paddingLeft: 3 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "black" }}>
           {isViewMode ? "Trade Drafts" : "Create Trade"}
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setIsViewMode((prev) => !prev)}
-        >
-          {isViewMode ? "Create Trade" : "See Trades"}
-        </Button>
+        {isSmallScreen ? (
+          <IconButton
+            color="primary"
+            onClick={() => setIsViewMode((prev) => !prev)}
+          >
+            {isViewMode ? (
+              <VisibilityIcon sx={{ fontSize: 24 }} />
+            ) : (
+              <AddIcon sx={{ fontSize: 24 }} />
+            )}
+          </IconButton>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsViewMode((prev) => !prev)}
+          >
+            {isViewMode ? "Create Trade" : "See Trades"}
+          </Button>
+        )}
       </Box>
       {/* Main Content */}
       {isViewMode ? (

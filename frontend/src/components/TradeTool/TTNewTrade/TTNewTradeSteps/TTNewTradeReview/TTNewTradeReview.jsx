@@ -9,7 +9,12 @@ import { useState } from "react";
 import { saveTrade } from "../../../../../services/api";
 import TTNTradeReviewSummary from "./TTNTradeReviewSummary";
 
-const TTNewTradeReview = ({ reporterName, selectedTeams, tradeSummary, onSaveSuccess }) => {
+const TTNewTradeReview = ({
+  reporterName,
+  selectedTeams,
+  tradeSummary,
+  onSaveSuccess,
+}) => {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(null);
   const [saveError, setSaveError] = useState(null);
@@ -43,19 +48,11 @@ const TTNewTradeReview = ({ reporterName, selectedTeams, tradeSummary, onSaveSuc
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="h5" align="center" gutterBottom>
-        Trade Summary
-      </Typography>
-      {reporterName && (
-        <Typography align="center" gutterBottom>
-          Reported by: {reporterName}
-        </Typography>
-      )}
+    <Box sx={{ width: "96%", height: "calc(100vh - 64px)", overflowY: "auto" }}>
       {sortedSummary.map((team) => (
         <TTNTradeReviewSummary key={team.id} team={team} />
       ))}
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
         {saveSuccess && <Alert severity="success">{saveSuccess}</Alert>}
         {saveError && <Alert severity="error">{saveError}</Alert>}
         <Button

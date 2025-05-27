@@ -8,6 +8,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  LinearProgress,
 } from "@mui/material";
 import TTViewTradeRow from "./ttViewTradeRow";
 
@@ -30,10 +31,6 @@ const TTViewTrades = (props) => {
   useEffect(() => {
     fetchTrades();
   }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -86,14 +83,24 @@ const TTViewTrades = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {trades.map((trade, index) => (
-              <TTViewTradeRow
-                index={index}
-                key={trade.id}
-                trade={trade}
-                teams={props.teams}
-              />
-            ))}
+            {loading || trades.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center" style={{ padding: 0 }}>
+                  <LinearProgress />
+                </TableCell>
+              </TableRow>
+            ) : (
+              <>
+                {trades.map((trade, index) => (
+                  <TTViewTradeRow
+                    index={index}
+                    key={trade.id}
+                    trade={trade}
+                    teams={props.teams}
+                  />
+                ))}
+              </>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

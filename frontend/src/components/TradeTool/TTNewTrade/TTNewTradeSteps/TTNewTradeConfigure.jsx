@@ -14,6 +14,7 @@ import {
   Checkbox,
   ListItemText,
   Button,
+  Tooltip,
 } from "@mui/material";
 import { teamColors } from "../../../../utils/teamColors";
 import { useState, useEffect } from "react";
@@ -21,7 +22,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MIN_TEAMS = 2;
+
 const MenuProps = {
   PaperProps: {
     style: {
@@ -52,23 +53,20 @@ const StrictModeDroppable = ({ children, ...props }) => {
 
 function violatesStipienRule(picks, pickToRemove) {
   // Filter out the pick being considered for trade
-  const remainingPicks = picks.filter(p => p.id !== pickToRemove.id);
+  const remainingPicks = picks.filter((p) => p.id !== pickToRemove.id);
 
   // Get all years with a first-round pick
   const firstRoundYears = remainingPicks
-    .filter(p => p.round === 1)
-    .map(p => p.season);
+    .filter((p) => p.round === 1)
+    .map((p) => p.season);
 
   // For each year from the earliest to the latest, check every pair of years
-  const allYears = Array.from(new Set(picks.map(p => p.season))).sort();
+  const allYears = Array.from(new Set(picks.map((p) => p.season))).sort();
   for (let i = 0; i < allYears.length - 1; i++) {
     const y1 = allYears[i];
     const y2 = allYears[i + 1];
     // If both years have no first-round pick, it's a violation
-    if (
-      !firstRoundYears.includes(y1) &&
-      !firstRoundYears.includes(y2)
-    ) {
+    if (!firstRoundYears.includes(y1) && !firstRoundYears.includes(y2)) {
       return true;
     }
   }
@@ -242,8 +240,8 @@ const TTNewTradeConfigure = ({
   };
 
   // Check if any asset has changed teams
-  const hasTradeOccurred = Object.entries(tradeAssets).some(([teamId, assets]) =>
-    assets.some(asset => asset.team_id !== teamId)
+  const hasTradeOccurred = Object.entries(tradeAssets).some(
+    ([teamId, assets]) => assets.some((asset) => asset.team_id !== teamId)
   );
 
   return (
@@ -314,6 +312,9 @@ const TTNewTradeConfigure = ({
                         <InputLabel
                           id={`team-${teamId}-assets-label`}
                           size="small"
+                          sx={{
+                            fontSize: "14px",
+                          }}
                         >
                           {selectedAssets[teamId]?.length > 0 ? "" : "Assets"}
                         </InputLabel>
@@ -340,7 +341,11 @@ const TTNewTradeConfigure = ({
                                   }`
                                 : "";
                             });
-                            return selectedPicks.join(", ");
+                            return (
+                              <span style={{ fontSize: "14px" }}>
+                                {selectedPicks.join(", ")}
+                              </span>
+                            );
                           }}
                           MenuProps={MenuProps}
                           size="small"
@@ -351,6 +356,10 @@ const TTNewTradeConfigure = ({
                               overflow: "hidden",
                               textOverflow: "ellipsis",
                               width: "100%",
+                              fontSize: "14px",
+                            },
+                            "& .MuiSelect-multiple": {
+                              fontSize: "14px",
                             },
                           }}
                         >
@@ -362,13 +371,16 @@ const TTNewTradeConfigure = ({
                                 value={asset.id}
                                 size="small"
                                 disabled={violatesStipienRule(
-                                  teamAssets.find((t) => t.team_id === teamId)?.picks || [],
+                                  teamAssets.find((t) => t.team_id === teamId)
+                                    ?.picks || [],
                                   asset
                                 )}
                                 sx={{
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
+                                  padding: 0,
+                                  fontSize: "12px",
                                 }}
                               >
                                 <Checkbox
@@ -391,6 +403,7 @@ const TTNewTradeConfigure = ({
                                       whiteSpace: "nowrap",
                                       overflow: "hidden",
                                       textOverflow: "ellipsis",
+                                      fontSize: "14px",
                                     },
                                   }}
                                 />
@@ -457,7 +470,9 @@ const TTNewTradeConfigure = ({
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
                                         fontWeight: "bold",
-                                        width: `${300 / selectedTeams.length}%`,
+                                        width: `${
+                                          500 / selectedTeams.length
+                                        }px`,
                                       }}
                                     >
                                       {`${asset.season} ${
@@ -484,7 +499,14 @@ const TTNewTradeConfigure = ({
           </Table>
         </TableContainer>
       </DragDropContext>
-      {selectedTeams.length > 0 && (
+      <Tooltip
+        title={
+          selectedTeams.length < 2 || reporterName === "" || !hasTradeOccurred
+            ? "Swap assets between teams to continue"
+            : ""
+        }
+        arrow
+      >
         <Box
           sx={{
             position: "absolute",
@@ -507,7 +529,7 @@ const TTNewTradeConfigure = ({
             Next
           </Button>
         </Box>
-      )}
+      </Tooltip>
     </Box>
   );
 };

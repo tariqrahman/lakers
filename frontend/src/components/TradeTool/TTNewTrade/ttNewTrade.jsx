@@ -1,13 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-  Paper,
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-} from "@mui/material";
-import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import { Paper, Box, Card, CardContent, Tooltip } from "@mui/material";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import TTNewTradeSelectTeams from "./TTNewTradeSteps/TTNewTradeSelectTeams";
 import TTNewTradeConfigure from "./TTNewTradeSteps/TTNewTradeConfigure";
 import TTNewTradeReview from "./TTNewTradeSteps/TTNewTradeReview/TTNewTradeReview";
@@ -64,55 +57,69 @@ const TTNewTrade = (props) => {
           }}
         >
           {activeStep === 0 && (
-            <TTNewTradeSelectTeams
-              teams={props.teams}
-              selectedTeams={selectedTeams}
-              setSelectedTeams={setSelectedTeams}
-              reporterName={reporterName}
-              setReporterName={setReporterName}
-            />
+            <>
+              <TTNewTradeSelectTeams
+                teams={props.teams}
+                selectedTeams={selectedTeams}
+                setSelectedTeams={setSelectedTeams}
+                reporterName={reporterName}
+                setReporterName={setReporterName}
+              />
+              <Card
+                sx={{
+                  width: "96%",
+                  position: "relative",
+                  minHeight: "400px",
+                  margin: "auto",
+                  mt: 2,
+                }}
+              >
+                <CardContent>
+                  <>
+                    {selectedTeams.length > 1 ? (
+                      <TTNewTradeConfigure
+                        teams={props.teams}
+                        selectedTeams={selectedTeams}
+                        setSelectedTeams={setSelectedTeams}
+                        teamAssets={props.teamAssets}
+                        reporterName={reporterName}
+                        setTradeSummary={setTradeSummary}
+                        onNext={handleNext}
+                      />
+                    ) : (
+                      <Tooltip title="Select 2 or more teams to begin" arrow>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: "100%",
+                            width: "100%",
+                            pt: 10,
+                          }}
+                        >
+                          <SwapHorizIcon
+                            sx={{ fontSize: 150 }}
+                            color="disabled"
+                          />
+                        </Box>
+                      </Tooltip>
+                    )}
+                  </>
+                </CardContent>
+              </Card>
+            </>
           )}
-          <Card
-            sx={{
-              width: "96%",
-              position: "relative",
-              minHeight: "400px",
-              margin: "auto",
-              mt: 2,
-            }}
-          >
-            <CardContent>
-              {activeStep === 0 && (
-                <>
-                  {selectedTeams.length > 1 ? (
-                    <TTNewTradeConfigure
-                      teams={props.teams}
-                      selectedTeams={selectedTeams}
-                      setSelectedTeams={setSelectedTeams}
-                      teamAssets={props.teamAssets}
-                      reporterName={reporterName}
-                      setTradeSummary={setTradeSummary}
-                      onNext={handleNext}
-                    />
-                  ) : (
-                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", width: "100%" , pt: 10}}>
-                      <SwapHorizIcon sx={{ fontSize: 150 }} color="disabled" />
-                    </Box>
-                  )}
-                </>
-              )}
-              {activeStep === 1 && (
-                <>
-                  <TTNewTradeReview
-                    reporterName={reporterName}
-                    selectedTeams={selectedTeams}
-                    tradeSummary={tradeSummary}
-                    onSaveSuccess={handleTradeSaved}
-                  />
-                </>
-              )}
-            </CardContent>
-          </Card>
+          {activeStep === 1 && (
+            <>
+              <TTNewTradeReview
+                reporterName={reporterName}
+                selectedTeams={selectedTeams}
+                tradeSummary={tradeSummary}
+                onSaveSuccess={handleTradeSaved}
+              />
+            </>
+          )}
         </Paper>
       </Box>
     </>
