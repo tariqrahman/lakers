@@ -80,7 +80,6 @@ const TradeTool = (props) => {
           </Button>
         )}
       </Box>
-      {/* Main Content */}
       {isViewMode ? (
         <Box sx={{ width: "90%", margin: "auto", pt: 4 }}>
           <TTViewTrades teams={props.teams} key={tradesRefreshKey} />

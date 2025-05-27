@@ -7,6 +7,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
   Paper,
   LinearProgress,
 } from "@mui/material";
@@ -16,6 +17,12 @@ const TTViewTrades = (props) => {
   const [trades, setTrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
 
   const fetchTrades = async () => {
     try {
@@ -97,12 +104,22 @@ const TTViewTrades = (props) => {
                     key={trade.id}
                     trade={trade}
                     teams={props.teams}
+                    onDelete={fetchTrades}
                   />
                 ))}
               </>
             )}
           </TableBody>
         </Table>
+        <TablePagination
+          colSpan={3}
+          style={{ padding: 0 }}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          count={trades.length}
+          rowsPerPage={10}
+          page={0}
+          onPageChange={handlePageChange}
+        />
       </TableContainer>
     </div>
   );

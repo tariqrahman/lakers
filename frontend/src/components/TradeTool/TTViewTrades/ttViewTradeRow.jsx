@@ -6,6 +6,7 @@ import {
   Box,
   Typography,
   IconButton,
+  Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TTNTradeReviewSummary from "../TTNewTrade/TTNewTradeSteps/TTNewTradeReview/TTNTradeReviewSummary";
@@ -42,7 +43,8 @@ const TTViewTradeRow = (props) => {
     setDeleting(true);
     try {
       await deleteTrade(props.trade.id);
-      if (props.onDelete) props.onDelete(props.trade.id); // parent can remove from list
+      setOpen(false); // Close the modal after delete
+      if (props.onDelete) props.onDelete(props.trade.id); // parent can remove from list or refetch
     } catch (err) {
       alert("Failed to delete trade");
     } finally {
@@ -98,6 +100,9 @@ const TTViewTradeRow = (props) => {
             maxHeight: "90vh",
             overflowY: "auto",
             borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 300,
           }}
         >
           <Box
@@ -108,14 +113,64 @@ const TTViewTradeRow = (props) => {
               mb: 2,
             }}
           >
-            <Typography variant="h6">Trade Summary</Typography>
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: "bold", color: "black" }}
+            >
+              Trade Summary - {props.trade.reporter_name} - {formattedDate}
+            </Typography>
             <IconButton onClick={() => setOpen(false)}>
               <CloseIcon />
             </IconButton>
           </Box>
-          {sortedSummary.map((team) => (
-            <TTNTradeReviewSummary key={team.id} team={team} />
-          ))}
+          {sortedSummary.length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <ul
+                style={{
+                  margin: 0,
+                  paddingLeft: 20,
+                  color: "black",
+                  fontSize: "14px",
+                }}
+              >
+                <li>
+                  <strong>Biggest Winner:</strong> {sortedSummary[0].name} (+
+                  {(
+                    sortedSummary[0].finalValue - sortedSummary[0].initialValue
+                  ).toFixed(1)}
+                  )
+                </li>
+                <li>
+                  <strong>Biggest Loser:</strong>{" "}
+                  {sortedSummary[sortedSummary.length - 1].name} (
+                  {(
+                    sortedSummary[sortedSummary.length - 1].finalValue -
+                    sortedSummary[sortedSummary.length - 1].initialValue
+                  ).toFixed(1)}
+                  )
+                </li>
+              </ul>
+            </Box>
+          )}
+
+          <Box sx={{ flex: 1 }}>
+            {sortedSummary.map((team) => (
+              <Box key={team.id} style={{ marginBottom: 40 }}>
+                <TTNTradeReviewSummary team={team} />
+              </Box>
+            ))}
+          </Box>
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              color="error"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              Delete
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </>

@@ -50,7 +50,9 @@ const TTNewTradeReview = ({
   return (
     <Box sx={{ width: "96%", height: "calc(100vh - 64px)", overflowY: "auto" }}>
       {sortedSummary.map((team) => (
-        <TTNTradeReviewSummary key={team.id} team={team} />
+        <Box key={team.id} style={{ marginBottom: 40 }}>
+          <TTNTradeReviewSummary team={team} />
+        </Box>
       ))}
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
         {saveSuccess && <Alert severity="success">{saveSuccess}</Alert>}

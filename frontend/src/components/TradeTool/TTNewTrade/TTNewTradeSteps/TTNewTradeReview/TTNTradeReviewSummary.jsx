@@ -1,4 +1,13 @@
-import { Box, Typography } from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import { teamColors } from "../../../../../utils/teamColors";
 
 const TTNTradeReviewSummary = (props) => {
   const formatPick = (pick) => {
@@ -20,42 +29,121 @@ const TTNTradeReviewSummary = (props) => {
       !props.team.initialAssets.some((initial) => initial.id === final.id)
   );
   return (
-    <Box key={props.team.id} sx={{ my: 3 }}>
-      <Typography align="center" sx={{ fontWeight: "bold", color: "black" }}>
-        {props.team.name}: {netValueChange >= 0 ? "+" : ""}
-        {netValueChange.toFixed(1)} Value
-      </Typography>
-      <Box sx={{ mt: 1, mb: 1 }}>
-        <Typography variant="subtitle1" color="error.main">
-          Outgoing Assets
-        </Typography>
-        {outgoingAssets.length === 0 ? (
-          <Typography>No outgoing assets</Typography>
-        ) : (
-          outgoingAssets.map((asset) => (
-            <Typography key={asset.id}>
-              {formatPick(asset)} (Value:{" "}
-              {asset.normalized_value?.toFixed(1) ?? 0})
-            </Typography>
-          ))
-        )}
-      </Box>
-      <Box sx={{ mt: 1, mb: 1 }}>
-        <Typography variant="subtitle1" color="success.main">
-          Incoming Assets
-        </Typography>
-        {incomingAssets.length === 0 ? (
-          <Typography>No incoming assets</Typography>
-        ) : (
-          incomingAssets.map((asset) => (
-            <Typography key={asset.id}>
-              {formatPick(asset)} (Value:{" "}
-              {asset.normalized_value?.toFixed(1) ?? 0})
-            </Typography>
-          ))
-        )}
-      </Box>
-    </Box>
+    <>
+      <TableContainer key={props.team.id}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell
+                colSpan={3}
+                align="center"
+                style={{
+                  fontWeight: "bold",
+                  padding: 6,
+                  backgroundColor: teamColors[props.team.id].primary,
+                  color: teamColors[props.team.id].primaryContrastFont,
+                }}
+              >
+                {" "}
+                {props.team.name}: {netValueChange >= 0 ? "+" : ""}
+                {netValueChange.toFixed(1)} Value
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  padding: 4,
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontSize: "12px",
+                }}
+              >
+                <SwapHorizIcon sx={{ fontSize: "20px", pt: 0.5, pl: 0.5 }} />
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  padding: 4,
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontSize: "12px",
+                }}
+              >
+                Asset Name
+              </TableCell>
+              <TableCell
+                style={{
+                  fontWeight: "bold",
+                  padding: 4,
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontSize: "12px",
+                }}
+              >
+                Value
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {outgoingAssets.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  align="center"
+                  style={{ fontSize: "12px", padding: 4 }}
+                >
+                  No outgoing assets
+                </TableCell>
+              </TableRow>
+            ) : (
+              outgoingAssets.map((asset) => (
+                <TableRow key={asset.id}>
+                  <TableCell style={{ fontSize: "12px", padding: 6 }}>
+                    Outgoing
+                  </TableCell>
+                  <TableCell style={{ fontSize: "12px", padding: 6 }}>
+                    {formatPick(asset)}
+                  </TableCell>
+                  <TableCell
+                    style={{ fontSize: "12px", padding: 6, color: "red" }}
+                  >
+                    -{asset.normalized_value?.toFixed(1) ?? 0}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+            {incomingAssets.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  align="center"
+                  style={{ fontSize: "12px", padding: 4 }}
+                >
+                  No incoming assets
+                </TableCell>
+              </TableRow>
+            ) : (
+              incomingAssets.map((asset) => (
+                <TableRow key={asset.id}>
+                  <TableCell style={{ fontSize: "12px", padding: 6 }}>
+                    Incoming
+                  </TableCell>
+                  <TableCell style={{ fontSize: "12px", padding: 6 }}>
+                    {formatPick(asset)}
+                  </TableCell>
+                  <TableCell
+                    style={{ fontSize: "12px", padding: 6, color: "green" }}
+                  >
+                    +{asset.normalized_value?.toFixed(1) ?? 0}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   );
 };
 
