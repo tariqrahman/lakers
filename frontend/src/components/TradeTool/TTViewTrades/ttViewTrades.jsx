@@ -45,14 +45,50 @@ const TTViewTrades = (props) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Reporter</TableCell>
-              <TableCell>Teams</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell
+                style={{
+                  padding: "10px",
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+              >
+                Reporter
+              </TableCell>
+              <TableCell
+                style={{
+                  padding: "10px",
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+              >
+                Teams
+              </TableCell>
+              <TableCell
+                style={{
+                  padding: "10px",
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+              >
+                Date
+              </TableCell>
+              <TableCell
+                style={{
+                  padding: "10px",
+                  backgroundColor: "#B0B0B0",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+              ></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {trades.map((trade) => (
+            {trades.map((trade, index) => (
               <TTViewTradeRow
+                index={index}
                 key={trade.id}
                 trade={trade}
                 teams={props.teams}

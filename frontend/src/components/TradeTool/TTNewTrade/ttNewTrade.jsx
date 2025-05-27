@@ -7,6 +7,7 @@ import {
   Typography,
   TextField,
 } from "@mui/material";
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import TTNewTradeSelectTeams from "./TTNewTradeSteps/TTNewTradeSelectTeams";
 import TTNewTradeConfigure from "./TTNewTradeSteps/TTNewTradeConfigure";
 import TTNewTradeReview from "./TTNewTradeSteps/TTNewTradeReview/TTNewTradeReview";
@@ -48,16 +49,15 @@ const TTNewTrade = (props) => {
         sx={{ width: "100%", height: "calc(100vh - 64px)", overflowY: "auto" }}
       >
         <Paper
-          elevation={2}
+          elevation={0}
           sx={{
             mx: "auto",
-            mt: 2,
+
             mb: 4,
             p: 4,
             display: "flex",
             gap: 2,
             flexWrap: "wrap",
-            backgroundColor: "#f5f5f5",
             alignItems: "center",
             justifyContent: "center",
             flexDirection: "column",
@@ -74,9 +74,7 @@ const TTNewTrade = (props) => {
           )}
           <Card
             sx={{
-              width: "95%",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
-              bgcolor: "rgba(255, 255, 255, 0.95)",
+              width: "96%",
               position: "relative",
               minHeight: "400px",
               margin: "auto",
@@ -97,9 +95,9 @@ const TTNewTrade = (props) => {
                       onNext={handleNext}
                     />
                   ) : (
-                    <Typography variant="h6" align="center" gutterBottom>
-                      Select 2 or more teams to begin
-                    </Typography>
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%", width: "100%" , pt: 10}}>
+                      <SwapHorizIcon sx={{ fontSize: 150 }} color="disabled" />
+                    </Box>
                   )}
                 </>
               )}

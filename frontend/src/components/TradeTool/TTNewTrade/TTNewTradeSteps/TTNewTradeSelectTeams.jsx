@@ -36,14 +36,21 @@ const TTNewTradeSelectTeams = (props) => {
   return (
     <Box
       sx={{
-        width: "100%",
+        width: "96%",
         display: "flex",
         justifyContent: "center",
         gap: 2,
         maxWidth: "1200px",
       }}
     >
-      <FormControl sx={{ width: 300 }} size="small">
+      <TextField
+        label="Name"
+        value={props.reporterName}
+        onChange={(e) => props.setReporterName(e.target.value)}
+        size="small"
+        sx={{ minWidth: 200 }}
+      />
+      <FormControl sx={{ width: "100%" }} size="small">
         <InputLabel id="team-select-label">Select Teams</InputLabel>
         <Select
           labelId="team-select-label"
@@ -79,13 +86,6 @@ const TTNewTradeSelectTeams = (props) => {
           ))}
         </Select>
       </FormControl>
-      <TextField
-        label="Name"
-        value={props.reporterName}
-        onChange={(e) => props.setReporterName(e.target.value)}
-        size="small"
-        sx={{ minWidth: 200 }}
-      />
     </Box>
   );
 };

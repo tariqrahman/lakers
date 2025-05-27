@@ -50,11 +50,11 @@ const TradeTool = (props) => {
           alignItems: "center",
           justifyContent: "space-between",
           px: 4,
-          py: 3,
+          pt: 6,
         }}
       >
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          {isViewMode ? "Trades" : "Create Trade"}
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "black", paddingLeft: 3 }}>
+          {isViewMode ? "Trade Drafts" : "Create Trade"}
         </Typography>
         <Button
           variant="contained"
@@ -66,7 +66,9 @@ const TradeTool = (props) => {
       </Box>
       {/* Main Content */}
       {isViewMode ? (
-        <TTViewTrades teams={props.teams} key={tradesRefreshKey} />
+        <Box sx={{ width: "90%", margin: "auto", pt: 4 }}>
+          <TTViewTrades teams={props.teams} key={tradesRefreshKey} />
+        </Box>
       ) : (
         <TTNewTrade
           teams={props.teams}

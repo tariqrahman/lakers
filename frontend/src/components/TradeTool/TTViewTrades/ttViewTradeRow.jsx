@@ -17,6 +17,8 @@ const TTViewTradeRow = (props) => {
   const [hover, setHover] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  const backgroundColor = props.index % 2 === 1 ? "#F0F0F0" : "#FFFFFF";
+
   const formattedTeams = props.teams
     .filter((team) => props.trade.team_ids.includes(team.id))
     .map((team) => team.name);
@@ -57,6 +59,7 @@ const TTViewTradeRow = (props) => {
         onClick={() => setOpen(true)}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
+        sx={{ backgroundColor: backgroundColor }}
       >
         <TableCell style={{ padding: "10px" }}>
           {props.trade.reporter_name}
@@ -70,10 +73,12 @@ const TTViewTradeRow = (props) => {
             <IconButton
               size="small"
               color="error"
+              hover
               onClick={handleDelete}
               disabled={deleting}
+              style={{ width: 18, height: 18 }}
             >
-              <DeleteIcon />
+              <DeleteIcon sx={{ width: 18, height: 18 }} />
             </IconButton>
           )}
         </TableCell>
