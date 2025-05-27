@@ -17,13 +17,10 @@ const TTNTradeReviewSummary = (props) => {
   };
 
   const netValueChange = props.team.finalValue - props.team.initialValue;
-  console.log("props.team", props.team, netValueChange);
-  // Outgoing: in initialAssets but not in finalAssets
   const outgoingAssets = props.team.initialAssets.filter(
     (initial) =>
       !props.team.finalAssets.some((final) => final.id === initial.id)
   );
-  // Incoming: in finalAssets but not in initialAssets
   const incomingAssets = props.team.finalAssets.filter(
     (final) =>
       !props.team.initialAssets.some((initial) => initial.id === final.id)

@@ -164,7 +164,22 @@ const TTViewTradeRow = (props) => {
             <Button
               variant="outlined"
               size="small"
-              color="error"
+              sx={{
+                color: '#d32f2f',
+                borderColor: '#d32f2f',
+                '&:hover': {
+                  borderColor: '#d32f2f',
+                  backgroundColor: 'rgba(211, 47, 47, 0.04)',
+                },
+                '&:focus': {
+                  outline: 'none',
+                  borderColor: '#d32f2f',
+                },
+                '&:focus-visible': {
+                  outline: '2px solid #d32f2f',
+                  outlineOffset: '2px',
+                }
+              }}
               onClick={handleDelete}
               disabled={deleting}
             >

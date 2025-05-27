@@ -1,6 +1,4 @@
-# NBA Stats Application
-
-A web application for viewing NBA draft picks and team information, built with React, Express, and PostgreSQL.
+# Lakers Project
 
 ## Project Structure
 
@@ -61,16 +59,6 @@ A web application for viewing NBA draft picks and team information, built with R
 - Backend runs on: http://localhost:3001
 - Frontend runs on: http://localhost:5173
 
-## API Endpoints
-
-- `GET /api/draft-picks`: Get all draft picks
-- `GET /api/draft-picks/team/:teamId`: Get draft picks for a specific team
-- `GET /api/team/:name`: Get team information by name
-
 ## Deployment
 
 The application is configured for deployment on Vercel:
-
-- Frontend: Static site deployment
-- Backend: Serverless functions
-- Database: Neon PostgreSQL 

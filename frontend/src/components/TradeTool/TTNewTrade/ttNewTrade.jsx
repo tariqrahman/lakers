@@ -117,6 +117,7 @@ const TTNewTrade = (props) => {
                 selectedTeams={selectedTeams}
                 tradeSummary={tradeSummary}
                 onSaveSuccess={handleTradeSaved}
+                onBack={handleBack}
               />
             </>
           )}

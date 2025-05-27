@@ -73,7 +73,21 @@ const TradeTool = (props) => {
         ) : (
           <Button
             variant="contained"
-            color="primary"
+            sx={{
+              "backgroundColor": "#552583",
+              "color": "#fff",
+              "&:hover": {
+                backgroundColor: "#6d3fb6",
+              },
+              "&:focus": {
+                outline: "none",
+                backgroundColor: "#552583",
+              },
+              "&:focus-visible": {
+                outline: "2px solid #6d3fb6",
+                outlineOffset: "2px",
+              },
+            }}
             onClick={() => setIsViewMode((prev) => !prev)}
           >
             {isViewMode ? "Create Trade" : "See Trades"}

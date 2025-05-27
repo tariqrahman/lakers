@@ -14,6 +14,7 @@ const TTNewTradeReview = ({
   selectedTeams,
   tradeSummary,
   onSaveSuccess,
+  onBack,
 }) => {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(null);
@@ -54,12 +55,48 @@ const TTNewTradeReview = ({
           <TTNTradeReviewSummary team={team} />
         </Box>
       ))}
-      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, gap: 2 }}>
         {saveSuccess && <Alert severity="success">{saveSuccess}</Alert>}
         {saveError && <Alert severity="error">{saveError}</Alert>}
         <Button
+          variant="outlined"
+          sx={{
+            color: '#d32f2f',
+            borderColor: '#d32f2f',
+            '&:hover': {
+              borderColor: '#d32f2f',
+              backgroundColor: 'rgba(211, 47, 47, 0.04)',
+            },
+            '&:focus': {
+              outline: 'none',
+              borderColor: '#d32f2f',
+            },
+            '&:focus-visible': {
+              outline: '2px solid #d32f2f',
+              outlineOffset: '2px',
+            }
+          }}
+          onClick={onBack}
+        >
+          Back
+        </Button>
+        <Button
           variant="contained"
-          color="primary"
+          sx={{
+            backgroundColor: "#552583",
+            color: "#fff",
+            '&:hover': {
+              backgroundColor: '#6d3fb6',
+            },
+            '&:focus': {
+              outline: 'none',
+              backgroundColor: '#552583',
+            },
+            '&:focus-visible': {
+              outline: '2px solid #6d3fb6',
+              outlineOffset: '2px',
+            }
+          }}
           onClick={handleSave}
           disabled={saving}
         >
