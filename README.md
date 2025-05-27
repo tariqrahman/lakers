@@ -1,5 +1,9 @@
 # Lakers Project
 
+## Prod Link
+
+- https://lakers-git-main-tariqrahmans-projects.vercel.app/
+
 ## Project Structure
 
 - `frontend/`: React application built with Vite
