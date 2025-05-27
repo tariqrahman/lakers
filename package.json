@@ -19,8 +19,5 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.2"
-  },
-  "dependencies": {
-    "react-beautiful-dnd": "^13.1.1"
   }
 }
