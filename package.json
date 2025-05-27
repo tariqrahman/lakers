@@ -9,10 +9,18 @@
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["nba", "stats", "react", "express"],
+  "keywords": [
+    "nba",
+    "stats",
+    "react",
+    "express"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "react-beautiful-dnd": "^13.1.1"
   }
-} 
+}

@@ -123,4 +123,22 @@ router.post('/refresh', async (req, res) => {
   }
 });
 
+// Get all teams with their information
+router.get('/draft-picks/teams', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        id,
+        name
+      FROM teams
+      ORDER BY name
+    `);
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+    res.status(500).json({ error: 'Failed to fetch teams' });
+  }
+});
+
 export default router; 

@@ -40,4 +40,18 @@ export async function getAllTeamsPicks() {
     throw new Error('Failed to fetch all teams picks');
   }
   return response.json();
-} 
+}
+
+// Get all teams with their information
+export const getAllTeams = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/draft-picks/teams`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch teams');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching teams:', error);
+    throw error;
+  }
+}; 
