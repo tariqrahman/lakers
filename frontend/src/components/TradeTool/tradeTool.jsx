@@ -57,7 +57,7 @@ const TradeTool = (props) => {
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: "bold", color: "black" }}>
-          {isViewMode ? "Trade Drafts" : "Create Trade"}
+          {isViewMode ? "All Trades" : "Create Trade"}
         </Typography>
         {isSmallScreen ? (
           <IconButton
