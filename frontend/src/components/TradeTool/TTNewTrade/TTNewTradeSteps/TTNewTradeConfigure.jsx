@@ -17,7 +17,8 @@ import {
 } from "@mui/material";
 import { teamColors } from "../../../../utils/teamColors";
 import { useState, useEffect } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
