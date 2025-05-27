@@ -34,7 +34,7 @@ const TradeTool = (props) => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height: "calc(100vh - 64px)", overflow: "hidden" }}>
       {!isViewMode ? (
         <TTViewTrades />
       ) : (

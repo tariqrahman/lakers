@@ -13,15 +13,15 @@ import {
   InputLabel,
   Checkbox,
   ListItemText,
-  OutlinedInput,
+  Button,
 } from "@mui/material";
 import { teamColors } from "../../../../utils/teamColors";
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
+const MIN_TEAMS = 2;
 const MenuProps = {
   PaperProps: {
     style: {
@@ -50,7 +50,14 @@ const StrictModeDroppable = ({ children, ...props }) => {
   return <Droppable {...props}>{children}</Droppable>;
 };
 
-const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
+const TTNewTradeConfigure = ({
+  selectedTeams,
+  teams,
+  teamAssets,
+  setTradeSummary,
+  onNext,
+  reporterName,
+}) => {
   // Track selected assets in dropdowns
   const [selectedAssets, setSelectedAssets] = useState({});
   // Track assets in droppable areas
@@ -68,14 +75,19 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
     setIsDragReady(true);
   }, [selectedTeams]);
 
+  const handleNextClick = () => {
+    getTeamTradeSummary();
+    if (onNext) onNext();
+  };
+
   const handleAssetChange = (teamId, event) => {
     const {
       target: { value },
     } = event;
-    
+
     // Get the new selection
     const newSelection = typeof value === "string" ? value.split(",") : value;
-    
+
     // Find removed items
     const removedItems = (selectedAssets[teamId] || []).filter(
       (id) => !newSelection.includes(id)
@@ -95,7 +107,7 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
     // Update trade assets
     setTradeAssets((prev) => {
       const newTradeAssets = { ...prev };
-      
+
       // Remove deselected items from all droppable areas
       Object.keys(newTradeAssets).forEach((targetTeamId) => {
         newTradeAssets[targetTeamId] = newTradeAssets[targetTeamId].filter(
@@ -128,7 +140,7 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
-    
+
     // Dropped outside a droppable area
     if (!destination) {
       return;
@@ -137,10 +149,10 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
     // Extract team IDs from droppable IDs
     const sourceTeamId = source.droppableId.split("-")[1];
     const destTeamId = destination.droppableId.split("-")[1];
-    
+
     const sourceIndex = source.index;
     const destIndex = destination.index;
-    
+
     // If dropped in the same place
     if (sourceTeamId === destTeamId && sourceIndex === destIndex) {
       return;
@@ -149,14 +161,14 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
     setTradeAssets((prev) => {
       // Create a deep copy of the previous state
       const newTradeAssets = JSON.parse(JSON.stringify(prev));
-      
+
       // Initialize arrays if they don't exist
       if (!newTradeAssets[sourceTeamId]) newTradeAssets[sourceTeamId] = [];
       if (!newTradeAssets[destTeamId]) newTradeAssets[destTeamId] = [];
 
       // Get the item being moved
       const [movedItem] = newTradeAssets[sourceTeamId].splice(sourceIndex, 1);
-      
+
       if (!movedItem) {
         return prev; // Return previous state if no item found
       }
@@ -170,7 +182,7 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
           return prev; // Return previous state if not selected
         }
       }
-      
+
       // Insert at new location
       newTradeAssets[destTeamId].splice(destIndex, 0, movedItem);
 
@@ -180,29 +192,32 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
 
   // Function to gather trade summary data for each team
   const getTeamTradeSummary = () => {
-    return selectedTeams.map(teamId => {
-      const team = teams.find(t => t.id === teamId);
-      const teamPicks = teamAssets.find(t => t.team_id === teamId)?.picks || [];
+    const summary = selectedTeams.map((teamId) => {
+      const team = teams.find((t) => t.id === teamId);
+      const teamPicks =
+        teamAssets.find((t) => t.team_id === teamId)?.picks || [];
       // Initial assets: only those selected in the dropdown
       const initialAssets = (selectedAssets[teamId] || [])
-        .map(id => teamPicks.find(pick => pick.id === id))
+        .map((id) => teamPicks.find((pick) => pick.id === id))
         .filter(Boolean);
       // Final assets: those in the droppable area
       const finalAssets = tradeAssets[teamId] || [];
-      const sumValue = arr => arr.reduce((sum, asset) => sum + (asset.normalized_value || 0), 0);
+      const sumValue = (arr) =>
+        arr.reduce((sum, asset) => sum + (asset.normalized_value || 0), 0);
       return {
         id: teamId,
         name: team?.name,
         initialAssets,
         finalAssets,
         initialValue: sumValue(initialAssets),
-        finalValue: sumValue(finalAssets)
+        finalValue: sumValue(finalAssets),
       };
     });
+    setTradeSummary(summary);
   };
 
   return (
-    <Box sx={{ width: "100%", mt: 2 }}>
+    <Box sx={{ width: "100%", mt: 2, pb: 8, position: "relative" }}>
       <DragDropContext onDragEnd={onDragEnd}>
         <TableContainer component={Paper}>
           <Table
@@ -387,7 +402,8 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
                                 index={index}
                               >
                                 {(provided, snapshot) => {
-                                  const assetColors = teamColors[asset.team_id] || {};
+                                  const assetColors =
+                                    teamColors[asset.team_id] || {};
                                   return (
                                     <Box
                                       ref={provided.innerRef}
@@ -434,13 +450,26 @@ const TTNewTradeConfigure = ({ selectedTeams, teams, teamAssets }) => {
           </Table>
         </TableContainer>
       </DragDropContext>
-      {/* Debug button to log trade summary */}
-      <Box sx={{ mt: 2, textAlign: 'center' }}>
-        <button onClick={() => {
-          const summary = getTeamTradeSummary();
-          console.log('Trade Summary:', summary);
-        }}>Log Trade Summary</button>
-      </Box>
+      {selectedTeams.length > 0 && (
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 10,
+            right: 10,
+            display: "flex",
+            gap: 2,
+            paddingTop: 10,
+          }}
+        >
+          <Button
+            variant="contained"
+            onClick={handleNextClick}
+            disabled={selectedTeams.length < 2 || reporterName === ""}
+          >
+            Next
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 };

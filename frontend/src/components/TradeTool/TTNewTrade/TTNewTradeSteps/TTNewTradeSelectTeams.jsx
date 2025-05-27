@@ -7,6 +7,7 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
+  TextField,
 } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
@@ -28,14 +29,21 @@ const TTNewTradeSelectTeams = (props) => {
       target: { value },
     } = event;
     props.setSelectedTeams(
-      // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center" }}>
-      <FormControl sx={{ width: 300 }}>
+    <Box
+      sx={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        gap: 2,
+        maxWidth: "1200px",
+      }}
+    >
+      <FormControl sx={{ width: 300 }} size="small">
         <InputLabel id="team-select-label">Select Teams</InputLabel>
         <Select
           labelId="team-select-label"
@@ -51,6 +59,7 @@ const TTNewTradeSelectTeams = (props) => {
             return selectedNames.join(", ");
           }}
           MenuProps={MenuProps}
+          size="small"
         >
           {props.teams.map((team) => (
             <MenuItem
@@ -70,6 +79,13 @@ const TTNewTradeSelectTeams = (props) => {
           ))}
         </Select>
       </FormControl>
+      <TextField
+        label="Name"
+        value={props.reporterName}
+        onChange={(e) => props.setReporterName(e.target.value)}
+        size="small"
+        sx={{ minWidth: 200 }}
+      />
     </Box>
   );
 };
