@@ -9,6 +9,7 @@ const TradeTool = (props) => {
   const [isViewMode, setIsViewMode] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tradesRefreshKey, setTradesRefreshKey] = useState(0);
 
   const fetchTeamAssets = async () => {
     try {
@@ -31,6 +32,11 @@ const TradeTool = (props) => {
 
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
+  };
+
+  const handleTradeSaved = () => {
+    setIsViewMode(true);
+    setTradesRefreshKey((k) => k + 1);
   };
 
   return (
@@ -60,13 +66,14 @@ const TradeTool = (props) => {
       </Box>
       {/* Main Content */}
       {isViewMode ? (
-        <TTViewTrades teams={props.teams} />
+        <TTViewTrades teams={props.teams} key={tradesRefreshKey} />
       ) : (
         <TTNewTrade
           teams={props.teams}
           teamAssets={teamAssets}
           onNext={handleNext}
           onBack={handleBack}
+          onTradeSaved={handleTradeSaved}
         />
       )}
     </Box>

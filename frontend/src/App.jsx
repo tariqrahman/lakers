@@ -1,24 +1,29 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-  CircularProgress,
-  Alert,
-  Box,
-} from "@mui/material";
+import { AppBar, Toolbar, Typography, Container, Box } from "@mui/material";
 import { getAllTeams } from "./services/api";
+
+import logo from "../public/logo.png";
 import TeamProfile from "./components/TeamProfile";
 import TradeTool from "./components/TradeTool/tradeTool";
 
 const Home = () => {
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchTeams = async () => {
+    const data = await getAllTeams();
+    setTeams(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchTeams();
+  }, []);
   return (
     <Container sx={{ mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        NBA Draft Picks
-      </Typography>
+      <TradeTool teams={teams} />
     </Container>
   );
 };
@@ -59,14 +64,11 @@ function App() {
           }}
         >
           <Toolbar sx={{ width: "100%", maxWidth: "100%", px: 2 }}>
-            <Typography
-              variant="h6"
-              component={Link}
-              to="/"
-              style={{ textDecoration: "none", color: "white" }}
-            >
-              NBA Draft Picks
-            </Typography>
+            <img
+              src={logo}
+              alt="Logo"
+              style={{ height: 30, marginRight: 16, display: "block" }}
+            />
             <Typography
               variant="h6"
               component={Link}

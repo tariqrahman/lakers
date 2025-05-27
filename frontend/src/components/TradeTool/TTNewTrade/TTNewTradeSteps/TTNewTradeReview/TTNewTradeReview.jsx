@@ -9,7 +9,7 @@ import { useState } from "react";
 import { saveTrade } from "../../../../../services/api";
 import TTNTradeReviewSummary from "./TTNTradeReviewSummary";
 
-const TTNewTradeReview = ({ reporterName, selectedTeams, tradeSummary }) => {
+const TTNewTradeReview = ({ reporterName, selectedTeams, tradeSummary, onSaveSuccess }) => {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(null);
   const [saveError, setSaveError] = useState(null);
@@ -34,6 +34,7 @@ const TTNewTradeReview = ({ reporterName, selectedTeams, tradeSummary }) => {
     try {
       await saveTrade({ reporterName, teamIds: selectedTeams, tradeSummary });
       setSaveSuccess("Trade saved successfully!");
+      if (onSaveSuccess) onSaveSuccess();
     } catch (err) {
       setSaveError("Failed to save trade");
     } finally {
@@ -51,9 +52,9 @@ const TTNewTradeReview = ({ reporterName, selectedTeams, tradeSummary }) => {
           Reported by: {reporterName}
         </Typography>
       )}
-      {sortedSummary.map((team) => {
-        <TTNTradeReviewSummary key={team.id} team={team} />;
-      })}
+      {sortedSummary.map((team) => (
+        <TTNTradeReviewSummary key={team.id} team={team} />
+      ))}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
         {saveSuccess && <Alert severity="success">{saveSuccess}</Alert>}
         {saveError && <Alert severity="error">{saveError}</Alert>}

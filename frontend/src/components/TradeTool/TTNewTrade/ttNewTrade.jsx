@@ -26,6 +26,15 @@ const TTNewTrade = (props) => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
+  // Add a handler for after save
+  const handleTradeSaved = () => {
+    if (props.onTradeSaved) props.onTradeSaved(); // parent can trigger refresh
+    setActiveStep(0);
+    setTradeSummary([]);
+    setSelectedTeams([]);
+    setReporterName("");
+  };
+
   // Advance to review step only after tradeSummary is set
   useEffect(() => {
     if (tradeSummary && tradeSummary.length > 0 && activeStep === 0) {
@@ -75,39 +84,35 @@ const TTNewTrade = (props) => {
             }}
           >
             <CardContent>
-              <Typography variant="h4" align="center" gutterBottom>
-                Create New Trade
-              </Typography>
-              <Box sx={{ mt: 4 }}>
-                {activeStep === 0 && (
-                  <>
-                    {selectedTeams.length > 1 ? (
-                      <TTNewTradeConfigure
-                        teams={props.teams}
-                        selectedTeams={selectedTeams}
-                        setSelectedTeams={setSelectedTeams}
-                        teamAssets={props.teamAssets}
-                        reporterName={reporterName}
-                        setTradeSummary={setTradeSummary}
-                        onNext={handleNext}
-                      />
-                    ) : (
-                      <Typography variant="h6" align="center" gutterBottom>
-                        Select 2 or more teams to begin
-                      </Typography>
-                    )}
-                  </>
-                )}
-                {activeStep === 1 && (
-                  <>
-                    <TTNewTradeReview
-                      reporterName={reporterName}
+              {activeStep === 0 && (
+                <>
+                  {selectedTeams.length > 1 ? (
+                    <TTNewTradeConfigure
+                      teams={props.teams}
                       selectedTeams={selectedTeams}
-                      tradeSummary={tradeSummary}
+                      setSelectedTeams={setSelectedTeams}
+                      teamAssets={props.teamAssets}
+                      reporterName={reporterName}
+                      setTradeSummary={setTradeSummary}
+                      onNext={handleNext}
                     />
-                  </>
-                )}
-              </Box>
+                  ) : (
+                    <Typography variant="h6" align="center" gutterBottom>
+                      Select 2 or more teams to begin
+                    </Typography>
+                  )}
+                </>
+              )}
+              {activeStep === 1 && (
+                <>
+                  <TTNewTradeReview
+                    reporterName={reporterName}
+                    selectedTeams={selectedTeams}
+                    tradeSummary={tradeSummary}
+                    onSaveSuccess={handleTradeSaved}
+                  />
+                </>
+              )}
             </CardContent>
           </Card>
         </Paper>

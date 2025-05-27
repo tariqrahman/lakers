@@ -50,6 +50,31 @@ const StrictModeDroppable = ({ children, ...props }) => {
   return <Droppable {...props}>{children}</Droppable>;
 };
 
+function violatesStipienRule(picks, pickToRemove) {
+  // Filter out the pick being considered for trade
+  const remainingPicks = picks.filter(p => p.id !== pickToRemove.id);
+
+  // Get all years with a first-round pick
+  const firstRoundYears = remainingPicks
+    .filter(p => p.round === 1)
+    .map(p => p.season);
+
+  // For each year from the earliest to the latest, check every pair of years
+  const allYears = Array.from(new Set(picks.map(p => p.season))).sort();
+  for (let i = 0; i < allYears.length - 1; i++) {
+    const y1 = allYears[i];
+    const y2 = allYears[i + 1];
+    // If both years have no first-round pick, it's a violation
+    if (
+      !firstRoundYears.includes(y1) &&
+      !firstRoundYears.includes(y2)
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 const TTNewTradeConfigure = ({
   selectedTeams,
   teams,
@@ -216,6 +241,11 @@ const TTNewTradeConfigure = ({
     setTradeSummary(summary);
   };
 
+  // Check if any asset has changed teams
+  const hasTradeOccurred = Object.entries(tradeAssets).some(([teamId, assets]) =>
+    assets.some(asset => asset.team_id !== teamId)
+  );
+
   return (
     <Box sx={{ width: "100%", mt: 2, pb: 8, position: "relative" }}>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -331,6 +361,10 @@ const TTNewTradeConfigure = ({
                                 key={asset.id}
                                 value={asset.id}
                                 size="small"
+                                disabled={violatesStipienRule(
+                                  teamAssets.find((t) => t.team_id === teamId)?.picks || [],
+                                  asset
+                                )}
                                 sx={{
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
@@ -423,7 +457,7 @@ const TTNewTradeConfigure = ({
                                         overflow: "hidden",
                                         textOverflow: "ellipsis",
                                         fontWeight: "bold",
-                                        width: `${100 / selectedTeams.length}%`,
+                                        width: `${300 / selectedTeams.length}%`,
                                       }}
                                     >
                                       {`${asset.season} ${
@@ -464,7 +498,11 @@ const TTNewTradeConfigure = ({
           <Button
             variant="contained"
             onClick={handleNextClick}
-            disabled={selectedTeams.length < 2 || reporterName === ""}
+            disabled={
+              selectedTeams.length < 2 ||
+              reporterName === "" ||
+              !hasTradeOccurred
+            }
           >
             Next
           </Button>
